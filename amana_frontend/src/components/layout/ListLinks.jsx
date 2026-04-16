@@ -1,17 +1,20 @@
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 
-export function ListLinks({ links }) {
-
+export function ListLinks({ links, activeTab, setActiveTab }) {
     return (
-        <div className="grid grid-cols-7 gap-2 mb-6 pb-2">
-            {links.map(({ label }) => (
-                <NavLink
-                    key={label}
-                    className="text-gray-500 font-bold text-xs text-center pb-2 hover:text-blue-500 hover:border-b-3 hover:border-blue-500"
-                    onClick={() => {
-                        console.log(`the target is : ${label}`);
-                    }}
-                >{label.toUpperCase()}</NavLink>
+        // <div className="grid grid-cols-7 gap-2 mb-6 pb-2">
+            <div className="flex gap-1 border-b border-gray-200 mb-6">
+            {links.map(({ label, id }) => (
+                <button
+                    key={id}
+                    onClick={() => setActiveTab(id)}
+                    className={`text-xs font-bold px-3 pb-2 whitespace-nowrap transition-colors
+                        ${activeTab === id 
+                            ? "text-blue-500 border-b-2 border-blue-500"
+                            : "text-gray-500 hover:text-blue-500"
+                        }`
+                    }
+                >{label.toUpperCase()}</button>
             ))}
         </div>
     );

@@ -8,6 +8,7 @@ import StatFilter from "../components/dashboard/StatFilter";
 import DonutChart from './../components/charts/DonutChart';
 import GaugeChart from "../components/charts/GaugeChart";
 import LineChart from "../components/charts/LineChart";
+import MoroccoMap from "../components/charts/MoroccoMap";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -76,25 +77,30 @@ export default function Dashboard() {
                     {activeTab === "creer-utilisateur" && <p>Créer un utilisateur content</p> }
                     {activeTab === "liste-utilisateurs" && <p>Liste d'utilisateurs content</p> }
 
-                    {(activeTab === "mes-statistiques" || activeTab === "mes-envois" ) && (
+                    {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
                         <div>
                             <StatFilter onFilter={(filters) => console.log(filters)}/>
-                            <div className="grid grid-cols-3 gap-4 mt-4">
-                                <DonutChart 
-                                    title="Détail des statuts"
-                                    data={statutData}
-                                    colors={statutColors}
-                                />
-                                <GaugeChart />
-                                <DonutChart 
-                                    title="Statut des envois"
-                                    data={envoisData}
-                                    colors={envoisColors}
-                                />
-                            </div>
-                                <div className="grid grid-cols-2 mt-4">
-                                    <LineChart />
-                                </div>
+                                {activeTab === "mes-statistiques" && (
+                                  <>
+                                    <div className="grid grid-cols-3 gap-4 mt-4">
+                                        <DonutChart 
+                                            title="Détail des statuts"
+                                            data={statutData}
+                                            colors={statutColors}
+                                        />
+                                        <GaugeChart />
+                                        <DonutChart 
+                                            title="Statut des envois"
+                                            data={envoisData}
+                                            colors={envoisColors}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 mt-4">
+                                        <LineChart />
+                                        <MoroccoMap />
+                                    </div>
+                                  </>
+                                )}
                         </div>
                     )}
               

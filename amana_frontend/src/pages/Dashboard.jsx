@@ -7,6 +7,7 @@ import { useState } from "react";
 import StatFilter from "../components/dashboard/StatFilter";
 import DonutChart from './../components/charts/DonutChart';
 import GaugeChart from "../components/charts/GaugeChart";
+import LineChart from "../components/charts/LineChart";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -91,6 +92,9 @@ export default function Dashboard() {
                                     colors={envoisColors}
                                 />
                             </div>
+                                <div className="grid grid-cols-2 mt-4">
+                                    <LineChart />
+                                </div>
                         </div>
                     )}
               

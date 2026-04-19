@@ -9,6 +9,7 @@ import DonutChart from './../components/charts/DonutChart';
 import GaugeChart from "../components/charts/GaugeChart";
 import LineChart from "../components/charts/LineChart";
 import MoroccoMap from "../components/charts/MoroccoMap";
+import MesEnvois from "./MesEnvois";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -80,6 +81,7 @@ export default function Dashboard() {
                     {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
                         <div>
                             <StatFilter onFilter={(filters) => console.log(filters)}/>
+                            <MesEnvois />
                                 {activeTab === "mes-statistiques" && (
                                   <>
                                     <div className="grid grid-cols-3 gap-4 mt-4">

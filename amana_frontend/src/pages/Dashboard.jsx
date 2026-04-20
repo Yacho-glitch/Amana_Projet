@@ -11,6 +11,10 @@ import Send from "../assets/send.png";
 import Box from "../assets/box.png";
 import Dirham from "../assets/dirham.jpg";
 import ListeUtilisateurs from "./ListeUtilisateurs";
+// import CreerClientForm from "../components/clients/CreerClientForm";
+import CreerClient from "./CreerClient";
+import CreerUtilisateur from "./CreerUtilisateur";
+
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -77,9 +81,6 @@ export default function Dashboard() {
                     {/* Placeholders — to be built */}
                     {activeTab === "mes-demandes" && <p>Mes demandes content</p> }
                     {activeTab === "demandes-modification" && <p>Demandes de modification content</p> }
-                    {activeTab === "creer-client" && <p>Créer un client content</p> }
-                    {activeTab === "creer-utilisateur" && <p>Créer un utilisateur content</p> }
-
 
 
                     {/* {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
@@ -146,6 +147,10 @@ export default function Dashboard() {
                 }
 
                 {activeTab === "liste-utilisateurs" && <ListeUtilisateurs /> }
+
+                {activeTab === "creer-client" && <CreerClient /> }
+
+                {activeTab === "creer-utilisateur" && <CreerUtilisateur /> }
 
               
                 </div>

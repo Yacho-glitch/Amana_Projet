@@ -93,7 +93,7 @@ export default function UtilisateursTable({ data = [], currentPage, totalPages, 
                     <button
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-1 text-xs rounded-lg border border-gray-500 hover:bg-gray-50 disabled:opacity-30"
+                        className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30"
                     >
                         &laquo;
                     </button>

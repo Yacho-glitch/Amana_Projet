@@ -7,6 +7,7 @@ const columns = [
     { key: "amountCrbt", label: "CRBT" },
     { key: "destNom", label: "Destinataire" },
     { key: "testDest", label: "Tel destinataire" },
+    { key: "destAdress1", label: "Adresse" },
     { key: "datePaiement", label: "Date paiement" }
 ];
 
@@ -21,7 +22,7 @@ function formatDate(dateStr) {
 
 function formatCrbt(amount) {
     if (!amount) return "-";
-    return `${amount.toLocaleDateString("fr-FR")} MAD`;
+    return `${amount.toLocaleString("fr-FR")} MAD`;
 }
 
 function StatusBadge({ status }) {
@@ -86,14 +87,14 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                         ) : (
                             data.map((row) => (
                                 <tr
-                                    key={row.idBorereau}
+                                    key={row.idBordereau}
                                     className={`border-b border-gray-50 hover:opacity-80 transition-opacity ${rowColor(row.dernierStatut)}`}
                                 >
                                     <td className="px-3 py-3">
                                         <input type="checkbox" />
                                     </td>
                                     <td className="px-3 py-3 font-semibold text-gray-700 whitespace-nowrap">
-                                        {row.codeBorereau}
+                                        {row.codeBordereau}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
                                         {formatDate(row.dateDepot)}
@@ -115,6 +116,9 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                                     </td>
                                     <td className="px-3 py-3 text-gray-500">
                                         {row.telDest || "-"}
+                                    </td>
+                                    <td className="px-3 py-3 text-gray-500">
+                                        {row.destAresse1 || "-"}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
                                         {formatDate(row.datePaiement)}

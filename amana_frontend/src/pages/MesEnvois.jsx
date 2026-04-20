@@ -13,6 +13,7 @@ const MOCK_DATA = [
         libville: "SALE",
         amountCrbt: 6650,
         telDest: null,
+        destAdress1: null,
         datePaiement: null,
     },
     {
@@ -26,6 +27,7 @@ const MOCK_DATA = [
         libville: "DAKHLA OUED EDDAHAB",
         amountCrbt: 5400,
         telDest: null,
+        destAdress1: null,
         datePaiement: null
     },
     {
@@ -39,6 +41,7 @@ const MOCK_DATA = [
         libville: "KENITRA",
         amountCrbt: 9000,
         telDest: null,
+        destAdress1: null,
         datePaiement: null,
     }
 ];
@@ -59,7 +62,7 @@ export default function MesEnvois() {
             <p className="text-sm font-bold text-gray-700">
                 {MOCK_DATA.length} Colis / 449 310,00 MAD
             </p>
-            <MesEnvois 
+            <EnvoisTable 
                 data={paginatedData}
                 currentPage={currentPage}
                 totalPages={totalPages}

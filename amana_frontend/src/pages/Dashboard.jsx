@@ -1,15 +1,16 @@
-import StatCard from "../components/dashboard/StatCard";
-import Send from "../assets/send.png";
-import Box from "../assets/box.png";
-import Dirham from "../assets/dirham.jpg";
-import { ListLinks } from "../components/layout/ListLinks";
 import { useState } from "react";
+import StatCard from "../components/dashboard/StatCard";
+import { ListLinks } from "../components/layout/ListLinks";
 import StatFilter from "../components/dashboard/StatFilter";
 import DonutChart from './../components/charts/DonutChart';
 import GaugeChart from "../components/charts/GaugeChart";
 import LineChart from "../components/charts/LineChart";
 import MoroccoMap from "../components/charts/MoroccoMap";
 import MesEnvois from "./MesEnvois";
+import Send from "../assets/send.png";
+import Box from "../assets/box.png";
+import Dirham from "../assets/dirham.jpg";
+import ListeUtilisateurs from "./ListeUtilisateurs";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -38,11 +39,12 @@ const listItems = [
 ];
 
 export default function Dashboard() {
-    const [activeTab, setActiveTap] = useState("mes-statistiques");
+    const [activeTab, setActiveTab] = useState("mes-statistiques");
 
     return (
         <div className="flex flex-col">
             <div className="flex flex-col">
+
                 <div className="grid grid-cols-3 gap-4 mb-4">
                     <StatCard 
                         label="NB. Colis affiché"
@@ -63,25 +65,27 @@ export default function Dashboard() {
                         color="border-blue-400"
                     />
                 </div>
+
+                {/* Tabs */}
                 <ListLinks 
                     links={listItems}
                     activeTab={activeTab}
-                    setActiveTab={setActiveTap}    
+                    setActiveTab={setActiveTab}    
                 />
             
                 <div className="bg-white rounded-xl p-4">
-                    {activeTab === "mes-statistiques" && <p>Mes statistiques content</p> }
-                    {activeTab === "mes-envois" && <p>Mes envois content</p> }
+                    {/* Placeholders — to be built */}
                     {activeTab === "mes-demandes" && <p>Mes demandes content</p> }
                     {activeTab === "demandes-modification" && <p>Demandes de modification content</p> }
                     {activeTab === "creer-client" && <p>Créer un client content</p> }
                     {activeTab === "creer-utilisateur" && <p>Créer un utilisateur content</p> }
-                    {activeTab === "liste-utilisateurs" && <p>Liste d'utilisateurs content</p> }
 
-                    {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
-                        <div>
-                            <StatFilter onFilter={(filters) => console.log(filters)}/>
-                            <MesEnvois />
+
+
+                    {/* {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
+                        <div className="flex flex-col">
+                                <StatFilter onFilter={(filters) => console.log(filters)}/>
+                             <MesEnvois /> 
                                 {activeTab === "mes-statistiques" && (
                                   <>
                                     <div className="grid grid-cols-3 gap-4 mt-4">
@@ -103,11 +107,49 @@ export default function Dashboard() {
                                     </div>
                                   </>
                                 )}
+                                {activeTab === "mes-envois" && <MesEnvois />}
                         </div>
-                    )}
+                    )}  */}
+
+
+                         {/* Mes statistiques */}
+                {activeTab === "mes-statistiques" && (
+                    <div className="flex flex-col">
+                        <StatFilter onFilter={(filters) => console.log(filters)} />
+                        <div className="grid grid-cols-3 gap-4 mt-4">
+                            <DonutChart
+                                title="Détail des statuts"
+                                data={statutData}
+                                colors={statutColors}
+                            />
+                            <GaugeChart />
+                            <DonutChart
+                                title="Statut des envois"
+                                data={envoisData}
+                                colors={envoisColors}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                            <LineChart />
+                            <MoroccoMap />
+                        </div>
+                    </div>
+                )}
+
+                {/* Mes envois */}
+                {activeTab === "mes-envois" && (
+                        <div className="flex flex-col gap-4">
+                            <StatFilter onFilter={(filter) => console.log(filter)} />
+                            <MesEnvois />
+                        </div>
+                    )
+                }
+
+                {activeTab === "liste-utilisateurs" && <ListeUtilisateurs /> }
+
               
                 </div>
             </div>
-        </div>
+         </div>
     );
 } 

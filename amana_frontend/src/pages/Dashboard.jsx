@@ -14,7 +14,7 @@ import ListeUtilisateurs from "./ListeUtilisateurs";
 // import CreerClientForm from "../components/clients/CreerClientForm";
 import CreerClient from "./CreerClient";
 import CreerUtilisateur from "./CreerUtilisateur";
-
+import MesDemandesModification from "./MesDemandesModification";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -35,7 +35,7 @@ const envoisColors = ["#FF8904", "#894B0A", "#51A2FF"];
 const listItems = [
     { id: "mes-statistiques", label: "Mes statistiques" },
     { id: "mes-envois", label: "Mes envois" },
-    { id: "mes-demandes", label: "Mes demandes" },
+    { id: "mes-demandes", label: "Mes demandes de modification" },
     { id: "demandes-modification", label: "Demandes de modification" },
     { id: "creer-client", label: "Créer un client" },
     { id: "creer-utilisateur", label: "Créer un utilisateur" },
@@ -79,7 +79,6 @@ export default function Dashboard() {
             
                 <div className="bg-white rounded-xl p-4">
                     {/* Placeholders — to be built */}
-                    {activeTab === "mes-demandes" && <p>Mes demandes content</p> }
                     {activeTab === "demandes-modification" && <p>Demandes de modification content</p> }
 
 
@@ -151,6 +150,9 @@ export default function Dashboard() {
                 {activeTab === "creer-client" && <CreerClient /> }
 
                 {activeTab === "creer-utilisateur" && <CreerUtilisateur /> }
+
+                {activeTab === "mes-demandes" && <MesDemandesModification /> }
+
 
               
                 </div>

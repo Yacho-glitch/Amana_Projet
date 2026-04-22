@@ -11,11 +11,11 @@ import Send from "../assets/send.png";
 import Box from "../assets/box.png";
 import Dirham from "../assets/dirham.jpg";
 import ListeUtilisateurs from "./ListeUtilisateurs";
-// import CreerClientForm from "../components/clients/CreerClientForm";
 import CreerClient from "./CreerClient";
 import CreerUtilisateur from "./CreerUtilisateur";
 import MesDemandesModification from "./MesDemandesModification";
 import DemandesModification from "./DemandesModification"
+import { useTab } from "../context/TabContext";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -44,7 +44,7 @@ const listItems = [
 ];
 
 export default function Dashboard() {
-    const [activeTab, setActiveTab] = useState("mes-statistiques");
+    const  { activeTab, setActiveTab } = useTab();
 
     return (
         <div className="flex flex-col">
@@ -79,36 +79,6 @@ export default function Dashboard() {
                 />
             
                 <div className="bg-white rounded-xl p-4">
-
-                    {/* {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
-                        <div className="flex flex-col">
-                                <StatFilter onFilter={(filters) => console.log(filters)}/>
-                             <MesEnvois /> 
-                                {activeTab === "mes-statistiques" && (
-                                  <>
-                                    <div className="grid grid-cols-3 gap-4 mt-4">
-                                        <DonutChart 
-                                            title="Détail des statuts"
-                                            data={statutData}
-                                            colors={statutColors}
-                                        />
-                                        <GaugeChart />
-                                        <DonutChart 
-                                            title="Statut des envois"
-                                            data={envoisData}
-                                            colors={envoisColors}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 mt-4">
-                                        <LineChart />
-                                        <MoroccoMap />
-                                    </div>
-                                  </>
-                                )}
-                                {activeTab === "mes-envois" && <MesEnvois />}
-                        </div>
-                    )}  */}
-
 
                          {/* Mes statistiques */}
                 {activeTab === "mes-statistiques" && (

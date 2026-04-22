@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import { TabProvider } from "./context/TabContext";
+import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
+import ProtectedRoute from "./router/ProtectedRoute";
 
 const Placeholder = ({ title }) => {
   return (
@@ -14,42 +16,48 @@ const Placeholder = ({ title }) => {
 
 function App() {
   return (
-    <TabProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<AppLayout />}>
-            {/* <Route path="/" element={<Placeholder title="Mes statistiques"/>} /> */}
-            <Route path="/" element={<Dashboard />} />
-            <Route
-              path="/envois"
-              element={<Placeholder title="Mes envois" />}
-            />
-            <Route
-              path="/mes-demandes"
-              element={<Placeholder title="Mes demandes de modification" />}
-            />
-            <Route
-              path="/demandes"
-              element={<Placeholder title="Demandes de modification" />}
-            />
-            <Route
-              path="/creer-client"
-              element={<Placeholder title="Creer un client" />}
-            />
-            <Route
-              path="/creer-utilisateur"
-              element={<Placeholder title="Creer un utilisateur" />}
-            />
-            <Route
-              path="/utilisateurs"
-              element={<Placeholder title="Liste des utilisateurs" />}
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </TabProvider>
+    <AuthProvider>
+      <TabProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={
+                      <ProtectedRoute>
+                        <AppLayout />
+                      </ProtectedRoute>
+            }>
+              {/* <Route path="/" element={<Placeholder title="Mes statistiques"/>} /> */}
+              <Route path="/" element={<Dashboard />} />
+              <Route
+                path="/envois"
+                element={<Placeholder title="Mes envois" />}
+              />
+              <Route
+                path="/mes-demandes"
+                element={<Placeholder title="Mes demandes de modification" />}
+              />
+              <Route
+                path="/demandes"
+                element={<Placeholder title="Demandes de modification" />}
+              />
+              <Route
+                path="/creer-client"
+                element={<Placeholder title="Creer un client" />}
+              />
+              <Route
+                path="/creer-utilisateur"
+                element={<Placeholder title="Creer un utilisateur" />}
+              />
+              <Route
+                path="/utilisateurs"
+                element={<Placeholder title="Liste des utilisateurs" />}
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TabProvider>
+    </AuthProvider>
   );
 }
 

@@ -15,6 +15,7 @@ import CreerUtilisateur from "./CreerUtilisateur";
 import MesDemandesModification from "./MesDemandesModification";
 import DemandesModification from "./DemandesModification"
 import { useTab } from "../context/TabContext";
+import { useAuth } from "../context/AuthContext";
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -32,18 +33,24 @@ const envoisData = [
 
 const envoisColors = ["#FF8904", "#894B0A", "#51A2FF"];
 
-const listItems = [
-    { id: "mes-statistiques", label: "Mes statistiques" },
-    { id: "mes-envois", label: "Mes envois" },
-    { id: "mes-demandes", label: "Mes demandes de modification" },
-    { id: "demandes-modification", label: "Demandes de modification" },
-    { id: "creer-client", label: "Créer un client" },
-    { id: "creer-utilisateur", label: "Créer un utilisateur" },
-    { id: "liste-utilisateurs", label: "Liste d'utilisateurs" }
-];
-
 export default function Dashboard() {
     const  { activeTab, setActiveTab } = useTab();
+    const { user } = useAuth();
+    
+    const allTabs = [
+        { id: "mes-statistiques", label: "Mes statistiques", roles: ["admin", "client"] },
+        { id: "mes-envois", label: "Mes envois", roles: ["admin", "client"] },
+        { id: "mes-demandes", label: "Mes demandes de modification", roles: ["admin", "client"] },
+        { id: "demandes-modification", label: "Demandes de modification", roles: ["admin"] },
+        { id: "creer-client", label: "Créer un client", roles: ["admin"] },
+        { id: "creer-utilisateur", label: "Créer un utilisateur", roles: ["admin"] },
+        { id: "liste-utilisateurs", label: "Liste d'utilisateurs", roles: ["admin"] },
+    ]
+
+    // filter tabs based on user role
+    const listItems = allTabs.filter((tab) => 
+        tab.roles.includes(user?.role)
+    );
 
     return (
         <div className="flex flex-col">

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import { TabProvider } from "./context/TabContext";
+import Login from "./pages/Login";
 
 const Placeholder = ({ title }) => {
   return (
@@ -16,6 +17,7 @@ function App() {
     <TabProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route element={<AppLayout />}>
             {/* <Route path="/" element={<Placeholder title="Mes statistiques"/>} /> */}
             <Route path="/" element={<Dashboard />} />

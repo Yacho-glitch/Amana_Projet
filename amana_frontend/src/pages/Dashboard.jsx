@@ -15,6 +15,7 @@ import ListeUtilisateurs from "./ListeUtilisateurs";
 import CreerClient from "./CreerClient";
 import CreerUtilisateur from "./CreerUtilisateur";
 import MesDemandesModification from "./MesDemandesModification";
+import DemandesModification from "./DemandesModification"
 
 const statutData = [
     { name: "En transit", value: 4.88 },
@@ -78,9 +79,6 @@ export default function Dashboard() {
                 />
             
                 <div className="bg-white rounded-xl p-4">
-                    {/* Placeholders — to be built */}
-                    {activeTab === "demandes-modification" && <p>Demandes de modification content</p> }
-
 
                     {/* {(activeTab === "mes-statistiques" || activeTab === "mes-envois") && (
                         <div className="flex flex-col">
@@ -153,6 +151,7 @@ export default function Dashboard() {
 
                 {activeTab === "mes-demandes" && <MesDemandesModification /> }
 
+                {activeTab === "demandes-modification" && <DemandesModification /> }
 
               
                 </div>

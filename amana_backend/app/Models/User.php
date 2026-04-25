@@ -22,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'telephone',
+        'adresse',
+        'ville'
     ];
 
     /**
@@ -45,5 +49,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function bordereau() {
+        return $this->hasMany(Bordereau::class);
+    }
+
+    public function demandes() {
+        return $this->hasMany(Demande::class);
     }
 }

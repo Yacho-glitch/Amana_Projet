@@ -35,4 +35,51 @@ class Bordereau extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeOfCode($query, $code) {
+        if ($code) {
+            $query->where('code_bordereau', 'like', '%' . $code . '%' );
+        }
+        return $query;
+    }
+
+    public function scopeOfStatut($query, $statut) {
+        if ($statut) {
+            $query->where('dernier_statut', $statut);
+        }
+        return $query;
+    }
+
+    public function scopeOfDateDepot($query, $start, $end) {
+        if ($start) {
+            $query->where('date_last_statut', '>=', $start);
+        }
+        if ($end) {
+            $query->where('date_last_statut', '<=', $end);
+        }
+        return $query;
+    }
+
+    public function scopeOfPaiement($query, $paiement) {
+        if ($paiement === 'paye') {
+            $query->where('paye', true);
+        } elseif ($paiement === 'impaye') {
+            $query->where('paye', false);
+        }
+        return $query;
+    }
+
+    public function scopeOfDestination($query, $destination) {
+        if ($destination) {
+            $query->where('libville', 'like', '%' . $destination . '%');
+        }
+        return $query;
+    }
+
+    public function scopeOfTelDest($query, $tel) {
+        if ($tel) {
+            $query->where('tel_dest', 'like', '%' . $tel . '%');
+        }
+        return $query;
+    }
 }

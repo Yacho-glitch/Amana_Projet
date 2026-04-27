@@ -2,6 +2,7 @@ import { useState } from "react";
 import Amana from "../assets/amana.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import api from "../api/apiService";
 
 export default function Login() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -23,13 +24,10 @@ export default function Login() {
 
         setLoading(true);
         try {
-            // Temporary mock - replace with real API later
-            const mockUser = { name: "User Test1", role: "admin" };
-            const mockToken = "fake-token-123";
+            const response = await api.post("/login", form)
 
-            login(mockUser, mockToken);
+            login(response.data.user, response.data.token);
             navigate("/");
-            console.log("Login with: ", form);
         } catch (err) {
             setError("Email ou mot de passe incorrect.");
         } finally {

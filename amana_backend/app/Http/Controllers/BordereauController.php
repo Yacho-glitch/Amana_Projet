@@ -11,7 +11,7 @@ class BordereauController extends Controller
     public function index(Request $request) {
         $user = $request->user();
 
-        $bordereau = Bordereau::query()
+        $bordereaux = Bordereau::query()
             ->when($user->role === 'client', fn($q) => $q->where('user_id', $user->id))
             ->ofCode($request->code_envoi)
             ->ofStatut($request->statut)
@@ -23,10 +23,10 @@ class BordereauController extends Controller
             ->orderBy('date_depot', 'desc')
             ->paginate($request->per_page ?? 10);
 
-        return response()->json($bordereau);
+        return response()->json($bordereaux);
     }
 
-    public function state(Request $request) {
+    public function stats(Request $request) {
         $user = $request->user();
 
         $query = Bordereau::query()

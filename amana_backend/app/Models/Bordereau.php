@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bordereau extends Model
 {
+
+    protected $table = 'bordereaux';
     protected $fillable = [
         'code_bordereau',
         'user_id',

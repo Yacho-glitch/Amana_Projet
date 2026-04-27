@@ -1,69 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EnvoisTable from "../components/envois/EnvoisTable";
-
-const MOCK_DATA = [
-    {
-        idBordereau: 65416935,
-        codeBordereau: "QB228184565MA",
-        dateDepot: "2025-12-08T17:46:44.000+00:00",
-        dernierStatut: "liv",
-        libelle: "Envoi livré",
-        dateLastStatus: "2025-12-09T12:10:11.000+00:00",
-        destNom: "-- --",
-        libville: "SALE",
-        amountCrbt: 6650,
-        telDest: null,
-        destAdress1: null,
-        datePaiement: null,
-    },
-    {
-        idBordereau: 65354571,
-        codeBordereau: "QB228183922MA",
-        dateDepot: "2025-12-04T16:49:09.000+00:00",
-        dernierStatut: "aff",
-        libelle: "En cours de livraison",
-        dateLastStatus: "2025-12-09T10:17:22.000+00:00",
-        destNom: "-- --",
-        libville: "DAKHLA OUED EDDAHAB",
-        amountCrbt: 5400,
-        telDest: null,
-        destAdress1: null,
-        datePaiement: null
-    },
-    {
-        idBordereau: 65354572,
-        codeBordereau: "QB229489245MA",
-        dateDepot: "2025-12-08T17:46:00.000+00:00",
-        dernierStatut: "trn",
-        libelle: "En transit",
-        dateLastStatus: "2025-12-08T19:31:00.000+00:00",
-        destNom: "-- --",
-        libville: "KENITRA",
-        amountCrbt: 9000,
-        telDest: null,
-        destAdress1: null,
-        datePaiement: null,
-    }
-];
-
-const ITEMS_PER_PAGE = 10;
+import api from "../api/apiService";
 
 export default function MesEnvois() {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [totalCrbt, setTotalCrbt] = useState(0);
 
-    const totalPages = Math.ceil(MOCK_DATA.length / ITEMS_PER_PAGE);
-    const paginatedData = MOCK_DATA.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
+    useEffect(() => {
+        fetchEnvois(currentPage);
+    }, [currentPage]);
+
+    async function fetchEnvois(page) {
+        setLoading(true);
+        try {
+            const response = await api.get("/bordereaux", {
+                params: { page, per_page: 10 }
+            });
+            setData(response.data.data)
+            setTotalPages(response.data.last_page)
+            setTotal(response.data.total)
+            setTotalCrbt(
+                response.data.data.reduce((sum, b) => sum + b.amount_crbt, 0)
+            );
+        } catch (err) {
+            console.error("Erreur lors du chargement des envois", err)
+        } finally {
+            setLoading(false)
+        }
+
+        if (loading) {
+            return (
+                <div className="flex items-center justify-center py-12">
+                    <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl" />
+                </div>
+            )
+        }
+    }
 
     return (
         <div className="flex flex-col gap-4">
             <p className="text-sm font-bold text-gray-700">
-                {MOCK_DATA.length} Colis / 449 310,00 MAD
+                {total} Colis / {totalCrbt.toLocaleString("fr-FR")} MAD
             </p>
             <EnvoisTable 
-                data={paginatedData}
+                data={data}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}

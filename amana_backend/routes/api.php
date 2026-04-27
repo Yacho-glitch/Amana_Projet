@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Bordereaux
     Route::get('/bordereaux', [BordereauController::class, 'index']);
-    Route::get('/bordereaux/stats', [BordereauController::class, 'state']);
+    Route::get('/bordereaux/stats', [BordereauController::class, 'stats']);
 
     // Demandes
     Route::get('/demandes', [DemandeController::class, 'index']);

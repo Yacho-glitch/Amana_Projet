@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
         setUser(userData);
         setToken(userToken);
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", userData);
+        localStorage.setItem("token", userToken);
     }
 
     function logout() {

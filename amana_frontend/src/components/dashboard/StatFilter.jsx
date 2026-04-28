@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function StatFilter({ onFilter }) {
+export default function StatFilter({ onFilter, total = 0, totalCrbt = 0 }) {
     const [filters, setFilters] = useState({
         codeEnvoi: "",
         telDest: "",
@@ -128,17 +128,15 @@ export default function StatFilter({ onFilter }) {
                 {/* Destination */}
                 <div className="flex flex-col">
                     <label className="text-xs text-gray-400 mb-1">Destination</label>
-                    <select 
-                        name="destination" 
-                        value={filters.destination}
-                        onChange={handleChange}
-                        className="text-xs border border-gray-200 rounded-lg px-2 py-2 outline-none text-gray-500"
-                    >
-                        <option value="">Toute destination</option>
-                        <option value="sale">Salé</option>
-                        <option value="casablanca">Casablanca</option>
-                        <option value="rabat">Rabat</option>
-                    </select>
+                    <div className="flex items-center border border-gray-200 rounded-lg px-2 py-2 gap-2">
+                        <input 
+                            name="destination"
+                            value={filters.destination}
+                            onChange={handleChange}
+                            placeholder="Toute destination"
+                            className="text-xs text-gray-500 outline-none w-full"
+                        />
+                    </div>
                 </div>
 
                 {/* CRBT */}
@@ -159,7 +157,9 @@ export default function StatFilter({ onFilter }) {
 
             {/* Summary + button de recherche */}
             <div className="flex items-center justify-between mt-4">
-                <p className="text-sm font-bold text-gray-700">82 Colis / 449 310,00 MAD</p>
+                <p className="text-sm font-bold text-gray-700">
+                    {total} Colis / {parseFloat(totalCrbt).toLocaleString("fr-FR")} MAD
+                </p>
                 <button
                     onClick={handleSubmit}
                     className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"

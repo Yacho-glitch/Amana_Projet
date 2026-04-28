@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import EnvoisTable from "../components/envois/EnvoisTable";
 import api from "../api/apiService";
 
-export default function MesEnvois() {
+export default function MesEnvois({ filters = {} }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [totalCrbt, setTotalCrbt] = useState(0);
+
+    useEffect(() => {
+        fetchEnvois(1);
+        setCurrentPage(1);
+    }, [filters]);
 
     useEffect(() => {
         fetchEnvois(currentPage);
@@ -18,13 +23,25 @@ export default function MesEnvois() {
         setLoading(true);
         try {
             const response = await api.get("/bordereaux", {
-                params: { page, per_page: 10 }
+                params: { 
+                    page,
+                    per_page: 10, 
+                    code_envoi: filters.codeEnvoi || undefined,
+                    tel_dest: filters.telDest || undefined,
+                    date_depot_start: filters.dateDepotStart || undefined,
+                    date_depot_end: filters.dateDepotEnd || undefined,
+                    date_statut_start: filters.dateStatutStart || undefined,
+                    date_statut_end: filters.dateStatutEnd || undefined,
+                    statut: filters.statut || undefined,
+                    paiement: filters.paiement || undefined,
+                    destination: filters.destination || undefined
+                }
             });
             setData(response.data.data)
             setTotalPages(response.data.last_page)
             setTotal(response.data.total)
             setTotalCrbt(
-                response.data.data.reduce((sum, b) => sum + b.amount_crbt, 0)
+                response.data.data.reduce((sum, b) => sum + parseFloat(b.amount_crbt), 0)
             );
         } catch (err) {
             console.error("Erreur lors du chargement des envois", err)

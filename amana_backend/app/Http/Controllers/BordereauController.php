@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Bordereau;
 use Illuminate\Http\Request;
-use function Laravel\Prompts\select;
 
 class BordereauController extends Controller
 {
@@ -17,7 +16,7 @@ class BordereauController extends Controller
             ->ofStatut($request->statut)
             ->ofDateDepot($request->date_depot_start, $request->date_depot_end)
             ->ofDateStatut($request->date_statut_start, $request->date_statut_end)
-            ->ofPaiement($request->tel_dest)
+            ->ofPaiement($request->paiement)
             ->ofDestination($request->destination)
             ->ofTelDest($request->tel_dest)
             ->orderBy('date_depot', 'desc')
@@ -36,7 +35,7 @@ class BordereauController extends Controller
         $totalCrbt = (clone $query)->sum('amount_crbt');
 
         $parStatut = (clone $query)
-            ->selectRow('dernier_statut, count(*) as count')
+            ->selectRaw('dernier_statut, count(*) as count')
             ->groupBy('dernier_statut')
             ->get();
 
@@ -44,16 +43,16 @@ class BordereauController extends Controller
         $impaye = (clone $query)->where('paye', false)->count();
 
         $parMois = (clone $query)
-            ->selectRow('DATE_FORMAT(date_depot, "%Y-%m") as mois, count(*) as total_envois, sum(amount_crbt) as total_crbt')
+            ->selectRaw('DATE_FORMAT(date_depot, "%Y-%m") as mois, count(*) as total_envois, sum(amount_crbt) as total_crbt')
             ->groupBy('mois')
-            ->groupBy('mois')
+            ->orderBy('mois')
             ->get();
 
         return response()->json([
             'total' => $total,
             'total_crbt' => $totalCrbt,
             'par_statut' => $parStatut,
-            'paiement' => [
+            'paiements' => [
                 'paye' => $paye,
                 'impaye' => $impaye
             ],

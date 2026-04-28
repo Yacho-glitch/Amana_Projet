@@ -28,6 +28,7 @@ export default function Dashboard() {
     const { user } = useAuth();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [envoisFilters, setEnvoisFilters] = useState({});
 
     useEffect(() => {
         fetchStats();
@@ -116,7 +117,11 @@ export default function Dashboard() {
             <div className="bg-white rounded-xl p-4">
                 {activeTab === "mes-statistiques" && (
                     <div className="flex flex-col">
-                        <StatFilter onFilter={(filter) => console.log(filter)} />
+                        <StatFilter 
+                            onFilter={(filter) => console.log(filter)} 
+                            total={stats?.total ?? 0}
+                            totalCrbt={stats?.total_crbt ?? 0}
+                        />
                         {loading ? (
                             <div className="flex items-center justify-center py-12">
                                 <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl" />
@@ -147,8 +152,12 @@ export default function Dashboard() {
 
                 {activeTab === "mes-envois" && (
                     <div className="flex flex-col gap-4">
-                        <StatFilter onFilter={(filter) => console.log(filter)}/>
-                            <MesEnvois />
+                        <StatFilter 
+                            onFilter={(filters) => setEnvoisFilters(filters)}
+                            total={stats?.total ?? 0}
+                            totalCrbt={stats?.total_crbt ?? 0}    
+                        />
+                        <MesEnvois filters={envoisFilters}/>
                     </div>
                 )} 
 

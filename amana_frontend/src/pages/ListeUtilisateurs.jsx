@@ -1,35 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../api/apiService";
 import UtilisateursTable from "../components/utilisateurs/UtilisateursTable";
 
-const MOCK_DATA = [
-    { id: 1, nom: "Touimi",  prenom: "Rachid",  email: "rachid@amana.ma",  telephone: "0612345678", role: "Admin",  statut: "actif"   },
-    { id: 2, nom: "Alaoui",  prenom: "Sara",    email: "sara@amana.ma",    telephone: "0698765432", role: "Client", statut: "actif"   },
-    { id: 3, nom: "Bennani", prenom: "Youssef", email: "youssef@amana.ma", telephone: null,         role: "Client", statut: "inactif" },
-    { id: 4, nom: "Chraibi", prenom: "Fatima",  email: "fatima@amana.ma",  telephone: "0654321987", role: "Client", statut: "actif"   },
-    { id: 5, nom: "Idrissi", prenom: "Omar",    email: "omar@amana.ma",    telephone: "0677889900", role: "Admin",  statut: "actif"   }
-]
-
-const ITEMS_PER_PAGE = 10;
-
 export default function ListeUtilisateurs() {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const totalPages = Math.ceil(MOCK_DATA.length / ITEMS_PER_PAGE);
-    const paginatedData = MOCK_DATA.slice(
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    async function fetchUsers() {
+        setLoading(true);
+        try {
+            const response = await api.get("/users");
+            setData(response.data);
+        } catch (err) {
+            console.log("Erreur utilisateurs:", err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleDelete(id) {
+        if (!window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) return;
+        try {
+            await api.delete(`/users/${id}`);
+            fetchUsers()
+        } catch (err) {
+            console.error("Erreur suppression", err);
+        }
+    }
+
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    const paginatedData = data.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl"/>
+            </div>
+        )
+    }
+
     return (
         <div className=" flex flex-col gap-4">
             <p className="text-sm font-bold text-gray-700">
-                {MOCK_DATA.length} Utilisateurs
+                {data.length} Utilisateurs
             </p>
             <UtilisateursTable 
                 data={paginatedData}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                onDelete={handleDelete}
             />
         </div>
     );

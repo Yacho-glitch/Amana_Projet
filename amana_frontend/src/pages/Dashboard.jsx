@@ -62,7 +62,7 @@ export default function Dashboard() {
     const lineData = stats?.par_mois?.map((m) => ({
         month: m.mois,
         crbt: parseFloat(m.total_crbt),
-        envois: parseFloat(m.total_crbt)
+        envois: parseFloat(m.total_envois)
     })) || [];
 
     const payePercent = stats

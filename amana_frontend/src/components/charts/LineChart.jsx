@@ -9,12 +9,7 @@ import {
     ResponsiveContainer
 } from "recharts";
 
-const data = [
-    { month: "Juil 2025", crbt: 175100, envois: 26 },
-    { month: "Aout 2025", crbt: 449310, envois: 82 }
-];
-
-export default function LineChart() {
+export default function LineChart({ data = [] }) {
     return (
         <div className="bg-white rounded-xl shadow-sm p-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-4">

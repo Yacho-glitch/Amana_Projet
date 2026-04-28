@@ -16,27 +16,59 @@ import MesDemandesModification from "./MesDemandesModification";
 import DemandesModification from "./DemandesModification"
 import { useTab } from "../context/TabContext";
 import { useAuth } from "../context/AuthContext";
-
-const statutData = [
-    { name: "En transit", value: 4.88 },
-    { name: "En cours de livraison", value: 1.22 },
-    { name: "Envoi livré", value: 93.90 }
-]
+import { useState, useEffect } from "react";
+import api from "../api/apiService";
 
 const statutColors = ["#FF8904", "#894B0A", "#51A2FF"];
-
-const envoisData = [
-    { name: "En cours", value: 4.88 },
-    { name: "Retourné", value: 1.22 },
-    { name: "Livré", value: 93.90 }
-];
 
 const envoisColors = ["#FF8904", "#894B0A", "#51A2FF"];
 
 export default function Dashboard() {
-    const  { activeTab, setActiveTab } = useTab();
+    const { activeTab, setActiveTab } = useTab();
     const { user } = useAuth();
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    async function fetchStats() {
+        setLoading(true);
+        try {
+            const response = await api.get("/bordereaux/stats");
+            setStats(response.data);
+        } catch (err) {
+            console.log("Erreur stats:", err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const statutData = stats?.par_statut?.map((s) => ({
+        name: s.dernier_statut === "liv" ? "Envoi livré"
+            : s.dernier_statut === "aff" ? "En cours de livraison"
+            : "En transit",
+        value: parseFloat(((s.count / (stats.total || 1)) * 100).toFixed(2))
+    })) || [];
+
+    const envoisData = stats?.par_statut?.map((s) => ({
+        name: s.dernier_statut === "liv" ? "Livré"
+            : s.dernier_statut === "aff" ? "En cours"
+            : "Retourné",
+        value: parseFloat(((s.count / (stats.total || 1)) * 100).toFixed(2))
+    })) || [];
     
+    const lineData = stats?.par_mois?.map((m) => ({
+        month: m.mois,
+        crbt: parseFloat(m.total_crbt),
+        envois: parseFloat(m.total_crbt)
+    })) || [];
+
+    const payePercent = stats
+        ? parseFloat(((stats.paiements.paye / (stats.total || 1)) * 100).toFixed(2))
+        : 0;
+
     const allTabs = [
         { id: "mes-statistiques", label: "Mes statistiques", roles: ["admin", "client"] },
         { id: "mes-envois", label: "Mes envois", roles: ["admin", "client"] },
@@ -54,84 +86,78 @@ export default function Dashboard() {
 
     return (
         <div className="flex flex-col">
-            <div className="flex flex-col">
-
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                    <StatCard 
-                        label="NB. Colis affiché"
-                        value={82}
-                        icon={Send}
-                        color="border-orange-400"
-                    />
-                    <StatCard 
-                        label="Total envois de la période"
-                        value={82}
-                        icon={Box}
-                        color="border-yellow-800"
-                    />
-                    <StatCard 
-                        label="Total CRBT"
-                        value="449 310,00 MAD"
-                        icon={Dirham}
-                        color="border-blue-400"
-                    />
-                </div>
-
-                {/* Tabs */}
-                <ListLinks 
-                    links={listItems}
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}    
+            <div className="grid grid-cols-3 gap-4 mb-4">
+                <StatCard 
+                    label="NB. Colis affiché"
+                    value={stats?.total ?? "-"}
+                    icon={Send}
+                    color="border-orange-400"
                 />
-            
-                <div className="bg-white rounded-xl p-4">
+                <StatCard 
+                    label="Total envois de la période"
+                    value={stats?.total ?? "-"}
+                    icon={Box}
+                    color="border-yellow-800"
+                />
+                <StatCard 
+                    label="Total CRBT"
+                    value={stats ? `${parseFloat(stats.total_crbt).toLocaleString("fr-FR")} MAD` : "-"}
+                    icon={Dirham}
+                    color="border-blue-400"
+                />
+            </div>
 
-                         {/* Mes statistiques */}
+            <ListLinks 
+                links={listItems}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+            />
+
+            <div className="bg-white rounded-xl p-4">
                 {activeTab === "mes-statistiques" && (
                     <div className="flex flex-col">
-                        <StatFilter onFilter={(filters) => console.log(filters)} />
-                        <div className="grid grid-cols-3 gap-4 mt-4">
-                            <DonutChart
-                                title="Détail des statuts"
-                                data={statutData}
-                                colors={statutColors}
-                            />
-                            <GaugeChart />
-                            <DonutChart
-                                title="Statut des envois"
-                                data={envoisData}
-                                colors={envoisColors}
-                            />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 mt-4">
-                            <LineChart />
-                            <MoroccoMap />
-                        </div>
+                        <StatFilter onFilter={(filter) => console.log(filter)} />
+                        {loading ? (
+                            <div className="flex items-center justify-center py-12">
+                                <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl" />
+                            </div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-3 gap-4 mt-4">
+                                    <DonutChart 
+                                        title="Détail des statuts"
+                                        data={statutData}
+                                        colors={statutColors}
+                                    />
+                                    <GaugeChart value={payePercent} />
+                                    <DonutChart 
+                                        title="Statut des envois"
+                                        data={envoisData}
+                                        colors={envoisColors}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                    <LineChart data={lineData} />
+                                    <MoroccoMap />
+                                </div>
+                            </>
+                        )}   
                     </div>
                 )}
 
-                {/* Mes envois */}
                 {activeTab === "mes-envois" && (
-                        <div className="flex flex-col gap-4">
-                            <StatFilter onFilter={(filter) => console.log(filter)} />
+                    <div className="flex flex-col gap-4">
+                        <StatFilter onFilter={(filter) => console.log(filter)}/>
                             <MesEnvois />
-                        </div>
-                    )
-                }
+                    </div>
+                )} 
 
-                {activeTab === "liste-utilisateurs" && <ListeUtilisateurs /> }
-
-                {activeTab === "creer-client" && <CreerClient /> }
-
-                {activeTab === "creer-utilisateur" && <CreerUtilisateur /> }
-
-                {activeTab === "mes-demandes" && <MesDemandesModification /> }
-
-                {activeTab === "demandes-modification" && <DemandesModification /> }
-
-              
-                </div>
+                {activeTab === "mes-demandes" && <MesDemandesModification />}
+                {activeTab === "demandes-modification" && <DemandesModification />}
+                {activeTab === "creer-client" && <CreerClient />}
+                {activeTab === "creer-utilisateur" && <CreerUtilisateur />}
+                {activeTab === "liste-utilisateurs" && <ListeUtilisateurs />}
             </div>
-         </div>
+        </div>
     );
 } 

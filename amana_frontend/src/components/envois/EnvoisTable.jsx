@@ -1,14 +1,14 @@
 const columns = [
-    { key: "codeBordereau", label: "Code envoi" },
-    { key: "dateDepot", label: "Date dépôt" },
+    { key: "code_bordereau", label: "Code envoi" },
+    { key: "date_depot", label: "Date dépôt" },
     { key: "libville", label: "Destination" },
     { key: "libelle", label: "Statut" },
-    { key: "dateLastStatus", label: "Date statut" },
-    { key: "amountCrbt", label: "CRBT" },
-    { key: "destNom", label: "Destinataire" },
-    { key: "testDest", label: "Tel destinataire" },
-    { key: "destAdress1", label: "Adresse" },
-    { key: "datePaiement", label: "Date paiement" }
+    { key: "date_last_status", label: "Date statut" },
+    { key: "amount_crbt", label: "CRBT" },
+    { key: "dest_nom", label: "Destinataire" },
+    { key: "tel_dest", label: "Tel destinataire" },
+    { key: "dest_adress1", label: "Adresse" },
+    { key: "date_paiement", label: "Date paiement" }
 ];
 
 function formatDate(dateStr) {
@@ -87,41 +87,41 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                         ) : (
                             data.map((row) => (
                                 <tr
-                                    key={row.idBordereau}
+                                    key={row.id}
                                     className={`border-b border-gray-50 hover:opacity-80 transition-opacity ${rowColor(row.dernierStatut)}`}
                                 >
                                     <td className="px-3 py-3">
                                         <input type="checkbox" />
                                     </td>
                                     <td className="px-3 py-3 font-semibold text-gray-700 whitespace-nowrap">
-                                        {row.codeBordereau}
+                                        {row.code_bordereau}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
-                                        {formatDate(row.dateDepot)}
+                                        {formatDate(row.date_depot)}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
                                         {row.libville}
                                     </td>
                                     <td className="px-3 py-3">
-                                        <StatusBadge status={row.dernierStatut}/>
+                                        <StatusBadge status={row.dernier_statut}/>
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
-                                        {formatDate(row.dateLastStatus)}
+                                        {formatDate(row.date_last_status)}
                                     </td>
                                     <td className="px-3 py-3 text-gray-600 font-medium whitespace-nowrap">
-                                        {formatCrbt(row.amountCrbt)}
+                                        {formatCrbt(row.amount_crbt)}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500">
-                                        {row.destNom || "-"}
+                                        {row.dest_nom || "-"}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500">
-                                        {row.telDest || "-"}
+                                        {row.tel_dest || "-"}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500">
-                                        {row.destAresse1 || "-"}
+                                        {row.dest_adress1 || "-"}
                                     </td>
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
-                                        {formatDate(row.datePaiement)}
+                                        {formatDate(row.date_paiement)}
                                     </td>
                                 </tr>
                             ))

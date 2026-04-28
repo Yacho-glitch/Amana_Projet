@@ -1,15 +1,13 @@
 import { PieChart, Pie, Cell } from "recharts";
 
-const value = 98.41;
-
-const data = [
-    { name: "Payé", value: value },
-    { name: "Impayé", value: 100 - value  }
-];
-
 const COLORS = ["#3b82f6", "#ef4444"];
 
-export default function GaugeChart() {
+export default function GaugeChart({ value = 0 }) {
+    const data = [
+        { name: "Payé", value: value },
+        { name: "Impayé", value: 100 - value }
+    ];
+
     return (
         <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center">
             <h3 className="text-sm font-semibold text-gray-700 mb-4">Statut des paiements</h3>

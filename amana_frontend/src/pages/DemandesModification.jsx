@@ -1,14 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../api/apiService";
 import MesDemandesModification from './MesDemandesModification';
-
-const MOCK_DATA = [
-    { id: 1, client: "Rachid Touimi", codeEnvoi: "QB228184565MA", typeModification: "Changement de destination", dateDepot: "2025-12-08", statut: "en_attente" },
-    { id: 2, client: "Sara Alaoui", codeEnvoi: "QB228183922MA", typeModification: "Changement de destinataire", dateDepot: "2025-12-06", statut: "en_attente" },
-    { id: 3, client: "Youssef Bennani", codeEnvoi: "QB229489245MA", typeModification: "Changement de d'adresse", dateDepot: "2025-12-04", statut: "acceptee" },
-    { id: 4, client: "Fatima Chraibi", codeEnvoi: "QB228272004MA", typeModification: "Changement de destination", dateDepot: "2025-12-03", statut: "refusee" },
-];
-
-const ITEMS_PER_PAGE = 10;
 
 function StatutBadge({ statut }) {
     const styles = {
@@ -29,21 +21,40 @@ function StatutBadge({ statut }) {
 }
 
 export default function DemandesModification() {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [data, setData] = useState(MOCK_DATA);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
-    const paginatedData = data.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-    );
+    useEffect(() => {
+        fetchDemandes();
+    }, []);
 
-    function handleAction(id, action) {
-        setData((prev) => 
-            prev.map((row) => 
-                row.id === id ? { ...row, statut: action } : row
-            )
-        );
+    async function fetchDemandes() {
+        setLoading(true);
+        try {
+            const response = await api.get("/demandes");
+            setData(response.data);
+        } catch (err) {
+            console.log("Erreur demandes:", err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleAction(id, action) {
+        try {
+            await api.patch(`/demandes/${id}/statut`, { statut: action });
+            fetchDemandes();
+        } catch (err) {
+            console.error("Erreur action:", err);
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl"/>
+            </div>
+        )
     }
 
     return (
@@ -66,73 +77,53 @@ export default function DemandesModification() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedData.map((row) => (
-                                <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                    <td className="px-4 py-3 font-semibold text-gray-700">{row.client}</td>
-                                    <td className="px-4 py-3 text-gray-500">{row.codeEnvoi}</td>
-                                    <td className="px-4 py-3 text-gray-500">{row.typeModification}</td>
-                                    <td className="px-4 py-3 text-gray-500">{row.dateDepot}</td>
-                                    <td className="px-4 py-3"><StatutBadge statut={row.statut}/></td>
-                                    <td className="px-4 py-3">
-                                        {row.statut === "en_attente" ? (
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleAction(row.id, "acceptee")}
-                                                    className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition-colors"
-                                                >
-                                                    <i className="fa-solid fa-check mr-1"/>
-                                                    Accepter
-                                                </button>
-                                                <button
-                                                    onClick={() => handleAction(row.id, "refusee")}
-                                                    className="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
-                                                >
-                                                    <i className="fa-solid fa-xmark mr-1"/>
-                                                    Refuser
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <span className="text-gray-300 text-xs">-</span>
-                                        )}
+                            {data.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="text-center py-12 text-gray-300 text-sm">
+                                        Aucun demande trouvée
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                data.map((row) => (
+                                    <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                        <td className="px-4 py-3 font-semibold text-gray-700">
+                                            {row.user?.name || "-"}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-500">{row.code_envoi}</td>
+                                        <td className="px-4 py-3 text-gray-500">{row.type_modification}</td>
+                                        <td className="px-4 py-3 text-gray-500">
+                                            {new Date(row.created_at).toLocaleDateString("fr-FR")}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <StatusBadge statut={row.statut} />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            {row.statut === "en_attente" ? (
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleAction(row.id, "acceptee")}
+                                                        className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition-colors"
+                                                    >
+                                                        <i className="fa-solid fa-check mr-1" />
+                                                        Accepter
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleAction(row.id, "refusee")}
+                                                        className="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
+                                                    >
+                                                        <i className="fa-solid fa-xmark mr-1" />
+                                                        Refuser
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-300 text-xs">—</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
-                </div>
-
-                {/* Pagination */}
-                <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-                    <p className="text-xs text-gray-400">Page {currentPage} sur {totalPages}</p>
-                    <div className="flex gap-1">
-                        <button
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30"
-                        >
-                            &laquo;
-                        </button>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                            <button
-                                key={page}
-                                onClick={() => setCurrentPage(page)}
-                                className={`px-3 py-1 text-xs rounded-lg border transition-colors
-                                    ${page === currentPage
-                                        ? "bg-orange-500 text-white border-orange-500"
-                                        : "border-gray-200 text-gray-500 hover:bg-gray-50"
-                                }`}
-                            >
-                                {page}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30"
-                        >
-                            &raquo;
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

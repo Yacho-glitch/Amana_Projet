@@ -54,10 +54,20 @@ class Bordereau extends Model
 
     public function scopeOfDateDepot($query, $start, $end) {
         if ($start) {
-            $query->where('date_last_statut', '>=', $start);
+            $query->whereDate('date_last_statut', '>=', $start);
         }
         if ($end) {
-            $query->where('date_last_statut', '<=', $end);
+            $query->whereDate('date_last_statut', '<=', $end);
+        }
+        return $query;
+    }
+
+    public function scopeOfDateStatut($query, $start, $end) {
+        if ($start) {
+            $query->whereDate('date_last_status', '>=', $start);
+        }
+        if ($end) {
+            $query->whereDate('date_last_status', '<=', $end);
         }
         return $query;
     }

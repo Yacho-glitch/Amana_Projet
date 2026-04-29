@@ -48,14 +48,14 @@ export default function MesEnvois({ filters = {} }) {
         } finally {
             setLoading(false)
         }
+    }
 
-        if (loading) {
-            return (
-                <div className="flex items-center justify-center py-12">
-                    <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl" />
-                </div>
-            )
-        }
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <i className="fa-solid fa-spinner fa-spin text-orange-500 text-2xl" />
+            </div>
+        )
     }
 
     return (

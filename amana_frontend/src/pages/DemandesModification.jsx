@@ -95,7 +95,7 @@ export default function DemandesModification() {
                                             {new Date(row.created_at).toLocaleDateString("fr-FR")}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <StatusBadge statut={row.statut} />
+                                            <StatutBadge statut={row.statut} />
                                         </td>
                                         <td className="px-4 py-3">
                                             {row.statut === "en_attente" ? (

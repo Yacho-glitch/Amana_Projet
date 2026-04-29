@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
-// import { NavLink } from "react-router-dom";
 import Amana from "../../assets/amana.jpg";
 import { useTab } from "../../context/TabContext";
+import { useAuth } from "../../context/AuthContext";
 
 const navItems = [
         { 
@@ -44,6 +44,15 @@ const navItems = [
 export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) {
     const { activeTab, setActiveTab } = useTab();
     const menuRef = useRef(null);
+    const { user } = useAuth();
+
+    const filteredNavItems = navItems.filter((item) => {
+        const adminOnly = ["demandes-modification", "creer-client", "creer-utilisateur","liste-utilisateurs"];
+        if (adminOnly.includes(item.id)) {
+            return user?.role === "admin";
+        }
+        return true;
+    })
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -108,7 +117,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
 
                         <div className="border-t border-gray-100 my-1" />
 
-                        {navItems.map((item) => (
+                        {filteredNavItems.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => handleNavClick(item.id)}
@@ -129,7 +138,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
 
             {!collapsed && (
                 <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
-                    {navItems.map((item) => (
+                    {filteredNavItems.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => handleNavClick(item.id)}
@@ -154,7 +163,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
 
             {collapsed && (
                 <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-                    {navItems.map((item) => (
+                    {filteredNavItems.map((item) => (
                         <button 
                             key={item.id}
                             onClick={() => handleNavClick(item.id)}
@@ -175,10 +184,10 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
             {!collapsed && (
                 <div className="px-4 py-4 border-t border-gray-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">U</div>
+                        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">{user?.name[0]}</div>
                         <div className="overflow-hidden">
-                            <p className="text-xs font-semibold text-gray-700 truncate">User Test1</p>
-                            <p className="text-xs text-gray-400">Client</p>
+                            <p className="text-xs font-semibold text-gray-700 truncate">{user?.name}</p>
+                            <p className="text-xs text-gray-400">{user?.role}</p>
                         </div>
                     </div>
                 </div>

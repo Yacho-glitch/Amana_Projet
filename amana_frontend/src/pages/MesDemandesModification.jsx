@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api/apiService";
 
-function StatusBadge({ statut }) {
+function StatutBadge({ statut }) {
     const styles = {
         en_attente: "bg-yellow-100 text-yellow-700",
         acceptee:   "bg-green-100 text-green-700",
@@ -196,7 +196,7 @@ export default function MesDemandesModification() {
                                             {new Date(row.created_at).toLocaleDateString("fr-FR")}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <StatusBadge statut={row.statut} />
+                                            <StatutBadge statut={row.statut} />
                                         </td>
                                     </tr>
                                 ))

@@ -4,55 +4,23 @@ import { useTab } from "../../context/TabContext";
 import { useAuth } from "../../context/AuthContext";
 
 const navItems = [
-        { 
-            id: "mes-statistiques",
-            label: "Mes statistiques",
-            icon: <i className="fa-solid fa-chart-bar w-4 text-center"/>,
-        },
-        {
-            id: "mes-envois",
-            label: "Mes envois",
-            icon: <i className="fa-solid fa-box w-4 text-center" />,
-        }, 
-        {
-            id: "mes-demandes",
-            label: "Mes demandes",
-            icon: <i className="fa-solid fa-pen-to-square w-4 text-center" />,
-        },
-        {
-            id: "demandes-modification",
-            label: "Demandes de modification",
-            icon: <i className="fa-solid fa-file-lines w-4 text-center" />
-        },
-        {
-            id: "creer-client",
-            label: "Créer un client",
-            icon: <i className="fa-solid fa-user-plus w-4 text-center" />,
-        },
-        {
-            id: "creer-utilisateur",
-            label: "Créer un utilisateur",
-            icon:  <i className="fa-solid fa-user w-4 text-center" />,
-        },
-        {
-            id: "liste-utilisateurs",
-            label: "Liste d'utilisateurs",
-            icon: <i className="fa-solid fa-users w-4 text-center" />,
-        }
-    ];
+    { id: "mes-statistiques",      label: "Mes statistiques",            icon: <i className="fa-solid fa-chart-bar w-4 text-center" />,    roles: ["admin", "client"] },
+    { id: "mes-envois",            label: "Mes envois",                  icon: <i className="fa-solid fa-box w-4 text-center" />,           roles: ["admin", "client"] },
+    { id: "mes-demandes",          label: "Mes demandes",                icon: <i className="fa-solid fa-pen-to-square w-4 text-center" />, roles: ["admin", "client"] },
+    { id: "demandes-modification", label: "Demandes de modification",    icon: <i className="fa-solid fa-file-lines w-4 text-center" />,    roles: ["admin"] },
+    { id: "creer-client",          label: "Créer un client",             icon: <i className="fa-solid fa-user-plus w-4 text-center" />,     roles: ["admin"] },
+    { id: "creer-utilisateur",     label: "Créer un utilisateur",        icon: <i className="fa-solid fa-user w-4 text-center" />,          roles: ["admin"] },
+    { id: "liste-utilisateurs",    label: "Liste d'utilisateurs",        icon: <i className="fa-solid fa-users w-4 text-center" />,         roles: ["admin"] },
+];
 
 export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) {
     const { activeTab, setActiveTab } = useTab();
     const menuRef = useRef(null);
     const { user } = useAuth();
 
-    const filteredNavItems = navItems.filter((item) => {
-        const adminOnly = ["demandes-modification", "creer-client", "creer-utilisateur","liste-utilisateurs"];
-        if (adminOnly.includes(item.id)) {
-            return user?.role === "admin";
-        }
-        return true;
-    })
+    const filteredNavItems = navItems.filter((item) => 
+        item.roles.includes(user?.role)  
+    );
 
     useEffect(() => {
         function handleClickOutside(e) {
@@ -86,7 +54,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
                       className="h-8 object-contain"
                       onError={(e) => { e.target.style.display = "none";
                       }}
-                      />
+                    />
                 )}
 
                 <div className="relative" ref={menuRef}>
@@ -99,7 +67,6 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
                             }
                         }}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-orange-500 hover:bg-orange-50 transition-colors"
-                        aria-label="Toggle sidebar"
                     >
                         <i className="fa-solid fa-bars text-lg"/>
                     </button>
@@ -137,7 +104,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
             </div>
 
             {!collapsed && (
-                <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
                     {filteredNavItems.map((item) => (
                         <button
                             key={item.id}
@@ -184,7 +151,7 @@ export default function Sidebar({ collapsed, onToggle, menuOpen, setMenuOpen }) 
             {!collapsed && (
                 <div className="px-4 py-4 border-t border-gray-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">{user?.name[0]}</div>
+                        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">{user?.name?.charAt(0).toUpperCase()}</div>
                         <div className="overflow-hidden">
                             <p className="text-xs font-semibold text-gray-700 truncate">{user?.name}</p>
                             <p className="text-xs text-gray-400">{user?.role}</p>

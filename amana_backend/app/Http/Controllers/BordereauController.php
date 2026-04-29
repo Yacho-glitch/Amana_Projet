@@ -29,8 +29,15 @@ class BordereauController extends Controller
         $user = $request->user();
 
         $query = Bordereau::query()
-            ->when($user->role === 'client', fn($q) => $q->where('user_id', $user->id));
-
+            ->when($user->role === 'client', fn($q) => $q->where('user_id', $user->id))
+            ->ofCode($request->code_envoi)
+            ->ofStatut($request->statut)
+            ->ofDateDepot($request->date_depot_start, $request->date_depot_end)
+            ->ofDateStatut($request->date_statut_start, $request->date_statut_end)
+            ->ofPaiement($request->paiement)
+            ->ofDestination($request->destination)
+            ->ofTelDest($request->tel_dest);
+            
         $total = (clone $query)->count();
         $totalCrbt = (clone $query)->sum('amount_crbt');
 

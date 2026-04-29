@@ -29,22 +29,47 @@ export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [envoisFilters, setEnvoisFilters] = useState({});
-
+    const [bordereaux, setBordereaux] = useState([])
+    
     useEffect(() => {
-        fetchStats();
+        fetchStats({});
     }, []);
+    
+    async function fetchStats(filters = {}) {
+    setLoading(true);
+    try {
+        const [statsResponse, bordereauxResponse] = await Promise.all([
+            api.get("/bordereaux/stats", {
+                params: {
+                    code_envoi:        filters.codeEnvoi        || undefined,
+                    tel_dest:          filters.telDest           || undefined,
+                    date_depot_start:  filters.dateDepotStart    || undefined,
+                    date_depot_end:    filters.dateDepotEnd      || undefined,
+                    date_statut_start: filters.dateStatutStart   || undefined,
+                    date_statut_end:   filters.dateStatutEnd     || undefined,
+                    statut:            filters.statut            || undefined,
+                    paiement:          filters.paiement          || undefined,
+                    destination:       filters.destination       || undefined,
+                }
+            }),
+            api.get("/bordereaux", {
+                params: {
+                    per_page: 100,
+                    statut:   filters.statut      || undefined,
+                    paiement: filters.paiement    || undefined,
+                    destination: filters.destination || undefined,
+                }
+            })
+        ]);
 
-    async function fetchStats() {
-        setLoading(true);
-        try {
-            const response = await api.get("/bordereaux/stats");
-            setStats(response.data);
-        } catch (err) {
-            console.log("Erreur stats:", err);
-        } finally {
-            setLoading(false);
-        }
+        setStats(statsResponse.data);
+        setBordereaux(bordereauxResponse.data.data);
+    } catch (err) {
+        console.log("Erreur stats:", err);
+    } finally {
+        setLoading(false);
     }
+}
 
     const statutData = stats?.par_statut?.map((s) => ({
         name: s.dernier_statut === "liv" ? "Envoi livré"
@@ -118,7 +143,7 @@ export default function Dashboard() {
                 {activeTab === "mes-statistiques" && (
                     <div className="flex flex-col">
                         <StatFilter 
-                            onFilter={(filter) => console.log(filter)} 
+                            onFilter={(filters) => { fetchStats(filters)}} 
                             total={stats?.total ?? 0}
                             totalCrbt={stats?.total_crbt ?? 0}
                         />
@@ -143,7 +168,7 @@ export default function Dashboard() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     <LineChart data={lineData} />
-                                    <MoroccoMap />
+                                    <MoroccoMap data={bordereaux}/>
                                 </div>
                             </>
                         )}   

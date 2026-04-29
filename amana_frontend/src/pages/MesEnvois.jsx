@@ -37,9 +37,9 @@ export default function MesEnvois({ filters = {} }) {
                     destination: filters.destination || undefined
                 }
             });
-            setData(response.data.data)
-            setTotalPages(response.data.last_page)
-            setTotal(response.data.total)
+            setData(response.data.data);
+            setTotalPages(response.data.last_page);
+            setTotal(response.data.total);
             setTotalCrbt(
                 response.data.data.reduce((sum, b) => sum + parseFloat(b.amount_crbt), 0)
             );

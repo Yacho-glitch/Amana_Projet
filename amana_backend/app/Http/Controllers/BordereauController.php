@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bordereau;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class BordereauController extends Controller
@@ -67,4 +68,81 @@ class BordereauController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $user = $request->user();
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'code_bordereau' => 'nullable|string|unique:bordereaux,code_bordereau',
+            'date_depot' => 'nullable|date',
+            'poids_reel' => 'nullable|numeric',
+            'dernier_statut' => 'nullable|in:liv,aff,trn',
+            'dest_nom' => 'nullable|string|max:255',
+            'dest_adress1' => 'nullable|string|max:255',
+            'libville' => 'nullable|string|max:255',
+            'tel_dest' => 'nullable|string|max:255',
+            'amount_crbt' => 'nullable|numeric',
+            'paye' => 'nullable|boolean',
+            'date_paiement' => 'nullable|date'
+        ]);
+
+        $code = $validated['code_bordereau'] ?? ('QB' . strtoupper(uniqid()));
+
+        $bordereau = Bordereau::create(array_merge($validated, [
+            'code_bordereau' => $code,
+            'paye' => $validated['paye'] ?? false
+        ]));
+
+        return response()->json($bordereau, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $bordereau = Bordereau::findOrFail($id);
+        $validated = $request->validate([
+            'dernier_statut' => 'required|in:liv,aff,trn',
+            'dest_nom' => 'required|string|max:255',
+            'dest_adress1' => 'nullable|string|max:255',
+            'libville' => 'nullable|string|max:255',
+            'tel_dest' => 'nullable|string|max:255',
+            'paye' => 'required|boolean',
+            'date_paiement' => 'nullable|date'
+        ]);
+
+        $bordereau->fill($validated);
+        $statusLabels = [
+            'liv' => 'Envoi livré',
+            'aff' => 'En cours de livraison',
+            'trn' => 'En transit'
+        ];
+        $bordereau->libelle = $statusLabels[$validated['dernier_statut']] ?? $bordereau->libelle;
+
+        if ($bordereau->isDirty('dernier_statut')) {
+            $bordereau->date_last_status = now();
+        }
+
+        $bordereau->save();
+
+        Notification::create([
+            'user_id' => $bordereau->user_id,
+            'type' => 'bordereau_updated',
+            'message' => "Le colis {$bordereau->code_bordereau} a été mis à jour.",
+            'data' => [
+                'bordereau_id' => $bordereau->id,
+                'code_bordereau' => $bordereau->code_bordereau,
+                'target_tab' => 'mes-envois'
+            ]
+        ]);
+
+        return response()->json($bordereau);
+    }
 }

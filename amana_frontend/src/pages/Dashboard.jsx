@@ -10,7 +10,6 @@ import Send from "../assets/send.png";
 import Box from "../assets/box.png";
 import Dirham from "../assets/dirham.jpg";
 import ListeUtilisateurs from "./ListeUtilisateurs";
-import CreerClient from "./CreerClient";
 import CreerUtilisateur from "./CreerUtilisateur";
 import MesDemandesModification from "./MesDemandesModification";
 import DemandesModification from "./DemandesModification"
@@ -100,7 +99,6 @@ export default function Dashboard() {
         { id: "mes-envois", label: "Mes envois", roles: ["admin", "client"] },
         { id: "mes-demandes", label: "Mes demandes de modification", roles: ["admin", "client"] },
         { id: "demandes-modification", label: "Demandes de modification", roles: ["admin"] },
-        { id: "creer-client", label: "Créer un client", roles: ["admin"] },
         { id: "creer-utilisateur", label: "Créer un utilisateur", roles: ["admin"] },
         { id: "liste-utilisateurs", label: "Liste d'utilisateurs", roles: ["admin"] },
     ]
@@ -188,7 +186,6 @@ export default function Dashboard() {
 
                 {activeTab === "mes-demandes" && <MesDemandesModification />}
                 {activeTab === "demandes-modification" && <DemandesModification />}
-                {activeTab === "creer-client" && <CreerClient />}
                 {activeTab === "creer-utilisateur" && <CreerUtilisateur />}
                 {activeTab === "liste-utilisateurs" && <ListeUtilisateurs />}
                 

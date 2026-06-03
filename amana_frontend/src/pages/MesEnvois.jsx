@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import EnvoisTable from "../components/envois/EnvoisTable";
+import BordereauEditModal from "../components/envois/BordereauEditModal";
+import { useAuth } from "../context/AuthContext";
 import api from "../api/apiService";
+import { useTab } from "../context/TabContext";
 
 export default function MesEnvois({ filters = {} }) {
+    const { user } = useAuth();
+    const isAdmin = user?.role === "admin";
+    const [selectedBordereau, setSelectedBordereau] = useState(null);
+    const { pendingCreateBordereauForUser, setPendingCreateBordereauForUser } = useTab();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -14,6 +21,23 @@ export default function MesEnvois({ filters = {} }) {
         fetchEnvois(1);
         setCurrentPage(1);
     }, [filters]);
+
+    useEffect(() => {
+        if (pendingCreateBordereauForUser) {
+            const u = pendingCreateBordereauForUser;
+            const prefill = {
+                user_id: u.id,
+                dest_nom: '',
+                dest_adress1: '',
+                libville: '',
+                tel_dest: '',
+                dernier_statut: 'trn',
+                paye: false
+            };
+            setSelectedBordereau(prefill);
+            setPendingCreateBordereauForUser(null);
+        }
+    }, [pendingCreateBordereauForUser]);
 
     useEffect(() => {
         fetchEnvois(currentPage);
@@ -68,7 +92,19 @@ export default function MesEnvois({ filters = {} }) {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                isAdmin={isAdmin}
+                onEdit={setSelectedBordereau}
             />
+            {selectedBordereau && (
+                <BordereauEditModal
+                    bordereau={selectedBordereau}
+                    onClose={() => setSelectedBordereau(null)}
+                    onSaved={() => {
+                        setSelectedBordereau(null);
+                        fetchEnvois(currentPage);
+                    }}
+                />
+            )}
         </div>
     )
 }

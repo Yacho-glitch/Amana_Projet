@@ -11,7 +11,7 @@ function StatusBadge({ statut }) {
     );
 }
 
-export default function UtilisateursTable({ data = [], currentPage, totalPages, onPageChange, onDelete }) {
+export default function UtilisateursTable({ data = [], currentPage, totalPages, onPageChange, onDelete, onCreateBordereau }) {
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -43,7 +43,16 @@ export default function UtilisateursTable({ data = [], currentPage, totalPages, 
                                             {row.role}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 flex items-center gap-2">
+                                        {row.role === "client" && onCreateBordereau && (
+                                            <button
+                                                onClick={() => onCreateBordereau(row)}
+                                                className="text-orange-500 hover:text-orange-700 transition-colors"
+                                                title="Créer un bordereau pour ce client"
+                                            >
+                                                <i className="fa-solid fa-plus" />
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => onDelete(row.id)}
                                             className="text-red-400 hover:text-red-600 transition-colors"

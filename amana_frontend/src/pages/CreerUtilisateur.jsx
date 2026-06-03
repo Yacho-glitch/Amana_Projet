@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/apiService";
+import { useTab } from "../context/TabContext";
 
 export default function CreerUtilisateur() {
     const [form, setForm] = useState({
@@ -19,6 +20,8 @@ export default function CreerUtilisateur() {
         setError("");
     }
 
+    const { setActiveTab, setPendingCreateBordereauForUser } = useTab();
+
     async function handleSubmit() {
         if (!form.name || !form.email || !form.role || !form.password) {
             setError("Veuillez remplir tous les champs obligatoires.");
@@ -35,15 +38,21 @@ export default function CreerUtilisateur() {
 
         setLoading(true);
         try {
-            await api.post("/users", {
+            const response = await api.post("/users", {
                 name:      form.name,
                 email:     form.email,
                 password:  form.password,
                 role:      form.role,
                 telephone: form.telephone,
             });
+            const user = response.data;
             setSubmitted(true);
             setForm({ name: "", email: "", password: "", confirmerMotDePasse: "", role: "", telephone: "" });
+            // If created user is a client, open Mes Envois with prefilled bordereau
+            if (user.role === 'client') {
+                setPendingCreateBordereauForUser(user);
+                setActiveTab('mes-envois');
+            }
             setTimeout(() => setSubmitted(false), 3000);
         } catch (err) {
             setError(err.response?.data?.message || "Une erreur est survenue.");

@@ -1,6 +1,7 @@
 import Amana from "../../assets/amana.jpg";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar({ user: userProp }) {
     const { user, logout } = useAuth();
@@ -19,13 +20,8 @@ export default function Navbar({ user: userProp }) {
                 <p className="text-xs text-gray-400">Profile: {displayUser?.role}</p>
             </div>
             
-            <img 
-                src={Amana} 
-                alt="Amana"
-                className="h-10 object-contain"
-                onError={(e) => (e.target.style.display = "none")} 
-            />
             <div className="flex items-center gap-3">
+                <NotificationBell />
                 <button
                     onClick={handleLogout}
                     className="text-xs text-gray-400 hover:text-red-500 transition-colors"

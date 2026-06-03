@@ -4,8 +4,9 @@ const TabContext = createContext();
 
 export function TabProvider({ children }) {
     const [activeTab, setActiveTab] = useState("mes-statistiques");
+    const [pendingCreateBordereauForUser, setPendingCreateBordereauForUser] = useState(null);
     return (
-        <TabContext.Provider value={{ activeTab, setActiveTab }}>
+        <TabContext.Provider value={{ activeTab, setActiveTab, pendingCreateBordereauForUser, setPendingCreateBordereauForUser }}>
             { children }
         </TabContext.Provider>
     );

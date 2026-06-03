@@ -8,7 +8,6 @@ const navItems = [
     { id: "mes-envois",            label: "Mes envois",                  icon: <i className="fa-solid fa-box w-4 text-center" />,           roles: ["admin", "client"] },
     { id: "mes-demandes",          label: "Mes demandes",                icon: <i className="fa-solid fa-pen-to-square w-4 text-center" />, roles: ["admin", "client"] },
     { id: "demandes-modification", label: "Demandes de modification",    icon: <i className="fa-solid fa-file-lines w-4 text-center" />,    roles: ["admin"] },
-    { id: "creer-client",          label: "Créer un client",             icon: <i className="fa-solid fa-user-plus w-4 text-center" />,     roles: ["admin"] },
     { id: "creer-utilisateur",     label: "Créer un utilisateur",        icon: <i className="fa-solid fa-user w-4 text-center" />,          roles: ["admin"] },
     { id: "liste-utilisateurs",    label: "Liste d'utilisateurs",        icon: <i className="fa-solid fa-users w-4 text-center" />,         roles: ["admin"] },
 ];

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import api from "../api/apiService";
 import UtilisateursTable from "../components/utilisateurs/UtilisateursTable";
+import { useTab } from "../context/TabContext";
 
 export default function ListeUtilisateurs() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const { setActiveTab, setPendingCreateBordereauForUser } = useTab();
 
     const ITEMS_PER_PAGE = 10;
 
@@ -35,6 +37,11 @@ export default function ListeUtilisateurs() {
         }
     }
 
+    function handleCreateBordereauForUser(user) {
+        setPendingCreateBordereauForUser(user);
+        setActiveTab("mes-envois");
+    }
+
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     const paginatedData = data.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -60,6 +67,7 @@ export default function ListeUtilisateurs() {
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
                 onDelete={handleDelete}
+                onCreateBordereau={handleCreateBordereauForUser}
             />
         </div>
     );

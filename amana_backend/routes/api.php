@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BordereauController;
 use App\Http\Controllers\DemandeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Models\Bordereau;
 use Illuminate\Http\Request;
@@ -25,6 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Bordereaux
     Route::get('/bordereaux', [BordereauController::class, 'index']);
     Route::get('/bordereaux/stats', [BordereauController::class, 'stats']);
+    Route::post('/bordereaux', [BordereauController::class, 'store']);
+    Route::patch('/bordereaux/{id}', [BordereauController::class, 'update']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
     // Demandes
     Route::get('/demandes', [DemandeController::class, 'index']);

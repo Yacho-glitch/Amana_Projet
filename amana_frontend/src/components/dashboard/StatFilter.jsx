@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function StatFilter({ onFilter, total = 0, totalCrbt = 0 }) {
     const [filters, setFilters] = useState({
@@ -23,6 +23,14 @@ export default function StatFilter({ onFilter, total = 0, totalCrbt = 0 }) {
     function handleSubmit() {
         onFilter(filters);
     }
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            onFilter(filters);
+        }, 350);
+
+        return () => clearTimeout(timeoutId);
+    }, [filters]);
 
     return (
         <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">

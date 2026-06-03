@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/apiService";
+import { useTab } from "../context/TabContext";
 
 export default function CreerClient() {
     const [form, setForm] = useState({
@@ -19,6 +20,8 @@ export default function CreerClient() {
         setError("");
     }
 
+    const { setActiveTab, setPendingCreateBordereauForUser } = useTab();
+
     async function handleSubmit() {
         if (!form.name || !form.email || !form.password) {
             setError("Veuillez remplir tous les champs obligatoires.");
@@ -27,12 +30,16 @@ export default function CreerClient() {
 
         setLoading(true);
         try {
-            await api.post("/users", {
+            const response = await api.post("/users", {
                 ...form,
                 role: "client",
             });
+            const user = response.data;
             setSubmitted(true);
             setForm({ name: "", email: "", password: "", telephone: "", adresse: "", ville: "" });
+            // Open MesEnvois and trigger create bordereau modal prefilled for this user
+            setPendingCreateBordereauForUser(user);
+            setActiveTab("mes-envois");
             setTimeout(() => setSubmitted(false), 3000);
         } catch (err) {
             setError(err.response?.data?.message || "Une erreur est survenue.");

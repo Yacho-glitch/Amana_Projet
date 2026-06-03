@@ -54,7 +54,7 @@ function rowColor(status) {
     return colors[status] || "";
 }
 
-export default function EnvoisTable({ data = [], currentPage, totalPages, onPageChange }) {
+export default function EnvoisTable({ data = [], currentPage, totalPages, onPageChange, isAdmin = false, onEdit }) {
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -72,13 +72,16 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                                     {col.label}
                                 </th>
                             ))}
+                            {isAdmin && (
+                                <th className="px-3 py-3 text-gray-400 font-semibold whitespace-nowrap">Actions</th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
                         {data.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan={columns.length + 1}
+                                    colSpan={columns.length + (isAdmin ? 2 : 1)}
                                     className="text-center py-12 text-gray-300 text-sm"
                                 >
                                     Aucun envoi trouvé
@@ -88,7 +91,7 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                             data.map((row) => (
                                 <tr
                                     key={row.id}
-                                    className={`border-b border-gray-50 hover:opacity-80 transition-opacity ${rowColor(row.dernierStatut)}`}
+                                    className={`border-b border-gray-50 hover:opacity-80 transition-opacity ${rowColor(row.dernier_statut)}`}
                                 >
                                     <td className="px-3 py-3">
                                         <input type="checkbox" />
@@ -123,6 +126,16 @@ export default function EnvoisTable({ data = [], currentPage, totalPages, onPage
                                     <td className="px-3 py-3 text-gray-500 whitespace-nowrap">
                                         {formatDate(row.date_paiement)}
                                     </td>
+                                    {isAdmin && (
+                                        <td className="px-3 py-3">
+                                            <button
+                                                onClick={() => onEdit(row)}
+                                                className="text-xs text-orange-500 font-semibold hover:text-orange-700"
+                                            >
+                                                Modifier
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}
